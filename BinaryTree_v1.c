@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
+#define bool int
+
  
 struct node{
 
@@ -9,7 +11,7 @@ struct node{
 };
  
 struct node *newNode(int item){
-    struct node *temp =  (struct node *)malloc(sizeof(struct node));
+    struct node *temp = (struct node *)malloc(sizeof(struct node));
     temp->key = item;
     temp->left = temp->right = NULL;
     temp->count = 1;
@@ -42,6 +44,23 @@ void postorder(struct node *root){
     }
 }
 
+void swap(int* xp, int* yp){
+    int temp = *xp;
+    *xp = *yp;
+    *yp = temp;
+}
+ 
+void bubbleSort(int arr[], int n){
+    int i, j;
+    for (i = 0; i < n - 1; i++)
+ 
+        for (j = 0; j < n - i - 1; j++)
+            if (arr[j] > arr[j + 1])
+                swap(&arr[j], &arr[j + 1]);
+}
+
+
+
 struct node* insert(struct node* node, int key){
     if (node == NULL) return newNode(key);
  
@@ -57,7 +76,7 @@ struct node* insert(struct node* node, int key){
     return node;
 }
  
-struct node * minValueNode(struct node* node){
+struct node* minValueNode(struct node* node){
     struct node* current = node;
  
     while (current->left != NULL)
@@ -76,10 +95,14 @@ struct node* deleteNode(struct node* root, int key){
         root->right = deleteNode(root->right, key);
  
     else{
-        //if (root->count > 1){
-        //   (root->count)--;
-        //   return root;
-        //}
+
+        /* Duplicates taken into consideration
+
+        if (root->count > 1){
+           (root->count)--;
+           return root;
+        }
+        */
  
         if (root->left == NULL){
             struct node *temp = root->right;
@@ -101,69 +124,55 @@ struct node* deleteNode(struct node* root, int key){
 
 }
 
-void NthPreorder(struct node* root, int n,int z)
-{
-    static int count[10001] = {0};
+bool checkHeightBalance(struct node *root, int *height){
+  // Check for emptiness
+  int leftHeight = 0, rightHeight = 0;
+  int l = 0, r = 0;
+  if (root == NULL){
+    *height = 0;
+    return 1;
+  }
+
+  l = checkHeightBalance(root->left, &leftHeight);
+  r = checkHeightBalance(root->right, &rightHeight);
+
+  *height = (leftHeight > rightHeight ? leftHeight : rightHeight) + 1;
+
+  if ((leftHeight - rightHeight >= 2) || (rightHeight - leftHeight >= 2))
+    return 0;
+
+  else
+    return l && r;
+}
+
+
+void search_node(struct node* root, int n, int z){
+    
+    static int count0[10001] = {0};
     if (root == NULL)
         return;
- 
-    if (count[z] <= n) {
-        
-        count[z]++;
-        if (count[z] == n)
-            printf("%d ", root->key);
 
-        NthPreorder(root->left, n,z);
-        NthPreorder(root->right, n,z);
-    }
+    count0[z]++;
+    if (root->key == n)
+        printf("%d ", count0[z]);
+
+    search_node(root->left, n,z);
+    search_node(root->right, n,z);    
 }
 
-void NthInorder(struct node* root, int n, int z)
-{   
-    static int count2[10001] = {0};
-    if (root == NULL)
-        return;
+struct node* sortedArrayToBST(int arr[], int start, int end){
+
+    if (start > end)
+      return NULL;
  
-    if (count2[z] <= n) {
+    /* Get the middle element and make it root */
+    int mid = (start + end)/2;
+    struct node *root = newNode(arr[mid]);
+    root->left =  sortedArrayToBST(arr, start, mid-1);
+    root->right = sortedArrayToBST(arr, mid+1, end);
  
-        NthInorder(root->left, n,z);
-        count2[z]++;
- 
-        if (count2[z] == n)
-            printf("%d ", root->key);
- 
-        NthInorder(root->right, n,z);
-    }
+    return root;
 }
-
-void NthPostorder(struct node* root, int n,int z)
-{
-    static int count3[10001] = {0};
-    if (root == NULL)
-        return;
- 
-    if (count3[z] <= n) {
-        NthPostorder(root->left, n,z);
- 
-        NthPostorder(root->right, n,z);
-
-        count3[z]++;
-
-        if (count3[z] == n)
-            printf("%d ", root->key);
-    }
-}
-
-void preorder_save_BST(struct node *root, int arr[], int c){
-    if (root != NULL){
-        printf("%d ", root->key);
-        arr[c] = (root ->key);
-        c++;
-        preorder_save_BST(root->left, arr, c);
-        preorder_save_BST(root->right, arr, c); 
-    }
-}
-
 
 
 int main(){
@@ -171,9 +180,9 @@ int main(){
     int n,m,i,j,c=0;
     int z = 0;
     struct node *root = NULL;
-    int menu_option = 0, tr = 1, sort = 0, count = 0, count1 = 0 ;
-    int store[10001], store1[10001], arr_read[10001];
-   printf("Binary Tree (Mostly made for sorted and balanced)");
+    int menu_option = 0, tr = 1, sort = 0, count = 0, count1 = 0, height = 0;
+    int store[10001], store1[10001], arr_read[10001], balanced = 0;
+    printf("Binary Tree (Mostly made for sorted and balanced types)");
 
     while (tr){
         int arr_write[count+count1], duplicate = 0; 
@@ -196,6 +205,7 @@ int main(){
             case 1:
                 if (sort == 1){
                 int node;
+                printf("Choose the number that you want to insert: ");
                 scanf("%d",&node);
                 for (i = 0; i < count+count1; i++){
                     if(store[i] == node)
@@ -209,6 +219,7 @@ int main(){
                 } else if (sort == 0){
                 int duplicate1 = 0;
                 int node1;
+                printf("Choose the number that you want to insert: ");
                 scanf("%d",&node1);
                 if (count1 !=0){
                 for (int i=0; i<count1;i++){
@@ -231,6 +242,7 @@ int main(){
             case 2:
                 if (sort == 1){
                 int del_node;
+                printf("Choose the number you want to delete: ");
                 scanf("%d",&del_node);
                 root = deleteNode(root,del_node);
                 for(int i=0; i<count+count1; i++){
@@ -247,6 +259,7 @@ int main(){
                 }
                 } else if (sort == 0){
                     int del;
+                    printf("Choose the number you want to delete: ");
                     scanf("%d",&del);
                     for(int i=0; i<count1; i++){
                     if (store1[i] == del){
@@ -265,16 +278,18 @@ int main(){
             case 3:
                 if (sort == 1){
                 int search;
-                printf("Choose the index of the number you seek: ");
+                printf("Choose the number you seek: ");
                 scanf("%d",&search);
-                NthPreorder(root,search,z);
+                printf("It is at the position: ");
+                search_node(root,search,z);
                 printf("\n");
                 } else if (sort == 0){
                 int search1;
+                printf("Choose the number you seek: ");
                 scanf("%d",&search1);
-                for(int i = 0; i<count1; i++){
+                for(  i=0; i<count1; i++){
                     if (store1[i] == search1){
-                        printf("It is at position with index: %d\n",i+1);
+                        printf("It is at the position: %d\n",i+1);
                         break;
                     }
                 } 
@@ -323,34 +338,41 @@ int main(){
                 }
                 break;
             case 8:
+                if (sort == 1){
+                    if (checkHeightBalance(root,&height)){
+                        printf("The tree is already balanced\n");
+                    } else {
+                        printf("The tree was balanced\n");
+                        bubbleSort(store, count+count1);
+                        root = sortedArrayToBST(store,0,count+count1-1);
+                        preorder(root);
+                        printf("\n");
+                    }
+            
+                }
                 break;
             case 9:
                 FILE *fr;
-                int nodules;
-                printf("Input the number of nodes: ");
-                scanf("%d",&nodules);
-                fr = fopen("BinaryTree.txt","rb");
+                fr = fopen("BinaryTree","rb");
                 if (fr == NULL){
                     printf("Error");
                     exit(1);
                 }
                 fread(arr_read, sizeof(int), sizeof(arr_read), fr);
                 fclose(fr);
-                for (i=0; i<nodules; i++){
-                    store1[i] = arr_read[i];
+                for (i=0; i<arr_read[0]; i++){
+                    store1[i] = arr_read[i+1];
                     count1++;
-                    printf("Store 1: %d",store1[i]);
                 }
                 break;
             case 0:
                 FILE *f;
                 if (sort == 1){
-                //printf("Count: %d, Count1: %d\n", count, count1);
-                for (int i=0; i<count+count1;i++){
-                    arr_write[i] = store[i];
-                    //printf("%d ",store[i]);
+                    arr_write[0] = count+count1;
+                for ( i=0; i<count+count1;i++){
+                    arr_write[i+1] = store[i];
                 }
-                f = fopen("BinaryTree.txt","wb");
+                f = fopen("BinaryTree","wb");
                 if (f == NULL){
                     printf("Error");
                     exit(1);
@@ -358,13 +380,12 @@ int main(){
                 fwrite(arr_write, sizeof(int), sizeof(arr_write), f);
                 fclose(f);
                 exit(0);
-                break;
                 } else if (sort == 0){
-                    for (int i=0; i<count1;i++){
-                    arr_write[i] = store1[i];
-                    //printf("%d ",store[i]);
+                    arr_write[0] = count1;
+                    for ( i=0; i<count1;i++){
+                    arr_write[i+1] = store1[i];
                 }
-                f = fopen("BinaryTree.txt","wb");
+                f = fopen("BinaryTree","wb");
                 if (f == NULL){
                     printf("Error");
                     exit(1);
@@ -373,6 +394,7 @@ int main(){
                 fclose(f);
                 exit(0);
                 }
+                break;
             default:
                 printf("Invalid input\n");
             break;
