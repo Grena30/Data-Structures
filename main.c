@@ -472,7 +472,6 @@ int main(){
                     error++;
 
                 }
-                preorder(root);
                 for (i=0; i<count1; i++){
                     root = insert(root, store1[i]);
                 }
