@@ -304,6 +304,39 @@ void inorder_list(struct node* root, int n, int z, int arr[]){
     }    
 }
 
+int search(int arr[], int strt, int end, int value){
+    int i;
+    for (i = strt; i <= end; i++) {
+        if (arr[i] == value)
+            return i;
+    }
+}
+
+struct node* buildTree(int in[], int pre[], int inStart, int inEnd){
+    static int preIndex = 0;
+ 
+    if (inStart > inEnd)
+        return NULL;
+ 
+    /* Pick current node from Preorder traversal using preIndex
+    and increment preIndex */
+    struct node* root = newNode(pre[preIndex++]);
+ 
+    /* If this node has no children then return */
+    if (inStart == inEnd)
+        return root;
+ 
+    /* Else find the index of this node in Inorder traversal */
+    int inIndex = search(in, inStart, inEnd, root->key);
+ 
+    /* Using index in Inorder traversal, construct left and
+     right subtress */
+    root->left = buildTree(in, pre, inStart, inIndex - 1);
+    root->right = buildTree(in, pre, inIndex + 1, inEnd);
+ 
+    return root;
+}
+
 
 int main(){
 
@@ -338,23 +371,8 @@ int main(){
 
             case 1:
 
-                // Checking for sort and duplicates after that we can easily insert the number
+                // Checking for duplicates after that we can easily insert the number
                 
-                if (sort == 1){
-                int node;
-                printf("\nChoose the number that you want to insert: ");
-                scanf("%d",&node);
-                for (i = 0; i < count+count1; i++){
-                    if(store[i] == node)
-                        duplicate = 1;
-                }
-                if (duplicate == 0){
-                store[count+count1] = node;
-                root = insert(root,node);
-                count++;
-                }
-
-                } else if (sort == 0){
                 int duplicate1 = 0, node1;
                 char or;
                 printf("\nChoose number that you want to insert and 'l' or 'r': ");
@@ -369,36 +387,13 @@ int main(){
                     store1[count1] = node1;
                     count1++;
                 }
-                /*if (count1 == 0){
-                    root = insert_bt(root, node1, or);
-                    store1[count1] = node1;
-                    count1++;
-                }*/
-                }
+
                 break;
 
             case 2:
 
-                // Checking for sort and then we can delete any number available in the tree
+                    //Deleting any number available in the tree
 
-                if (sort == 1){
-                int del_node;
-                printf("\nChoose the number you want to delete: ");
-                scanf("%d",&del_node);
-                root = deleteNode(root,del_node);
-                for(int i=0; i<count+count1; i++){
-                    if (store[i] == del_node){
-                        store[i] = store[i+1];
-                        for (int j=i+1; j<count+count1; j++){
-                            store[j] = store[j+1];
-                        }
-                        count--;
-                        break;
-                    } else {
-                        continue;
-                    }
-                    }
-                } else if (sort == 0){
                     int del;
                     printf("\nChoose the number you want to delete: ");
                     scanf("%d",&del);
@@ -416,7 +411,7 @@ int main(){
                         continue;
                     }
                     }
-                }
+                
                 break;
 
             case 3:
@@ -461,14 +456,27 @@ int main(){
             case 7:
 
                 // Sorting the binary tree
-
+                int error = 0;
                 for (i=0; i<count1; i++){
-                    root = deleteNode(root, store1[i]);
+                    root = delete_bt(root, store1[i]);
                     store[i] = store1[i];
                     }
+                while(root != NULL){
+                    if (error == 10){
+                        printf("There was an error with the inputed binary tree");
+                        exit(1);
+                    }
+                    for (i=0; i<count1; i++){
+                    root = delete_bt(root, store1[i]);
+                    }
+                    error++;
+
+                }
+                preorder(root);
                 for (i=0; i<count1; i++){
                     root = insert(root, store1[i]);
                 }
+                printf("\nThe tree was sorted\n");
                 printf("\n");
                 preorder(root);
                 printf("\n");
@@ -476,23 +484,9 @@ int main(){
 
             case 8:
 
-                /* Firstly we check the sort and then for the separate cases
-                    in the first we verify the balance if it is false then
-                    we balance the sorted binary tree, in the second we
-                    first sort the binary tree then we apply the balancing
-                */
+                    // We first sort the array with the binary tree's numbers 
+                    // then we apply the balancing to the binary tree
 
-                if (sort == 1){
-                    if (checkHeightBalance(root,&height)){
-                        printf("\nThe tree is already balanced\n");
-                    } else {
-                        printf("\nThe tree was balanced\n");
-                        bubbleSort(store, count+count1);
-                        root = balanceBST(store,0,count+count1-1);
-                        preorder(root);
-                        printf("\n");
-                    }
-                } else if (sort == 0){
                     if (checkHeightBalance(root,&height)){
                         printf("\nThe tree is already balanced\n");
                     } else {
@@ -503,33 +497,45 @@ int main(){
                         preorder(root);
                         printf("\n");
                     }
-                }
+                
                 break;
 
             case 9:
 
-                /* Reading from the file the binary tree.
-                    The tree is not sorted nor balanced
-                    even if it was saved while being both
-                */
-
+                // Reading from the file the binary tree.
+    
+                if (sort == 0){
                 FILE *fr;
-                fr = fopen("BinaryTree","rb");
-                if (fr == NULL){
+                fr = fopen("BinaryTree.txt","r+");
+                fscanf(fr,"%d ",&count1);
+                if (fr == NULL || count1 == 0){
                     printf("Error");
                     exit(1);
                 }
-                fread(arr_read, sizeof(int), sizeof(arr_read), fr);
-                fclose(fr);
-                count1 = arr_read[0];
-                for (i=0; i<arr_read[0]; i++){
-                    store1[i] = arr_read[i+1];
+
+                int preListRead[count1], inListRead[count1];
+                for (i=0;i<count1;i++){
+                    fscanf(fr,"%d",&preListRead[i]);
+                    store1[i] = preListRead[i];
                 }
+                for (i=0;i<count1;i++){
+                    fscanf(fr,"%d",&inListRead[i]);
+                }
+                fclose(fr);
+                printf("\nThe tree was inputed with success\n");
+                printf("\n");    
+                root = buildTree(inListRead, preListRead, 0, count1-1);
+                preorder(root);
+                printf("\n");
+                }
+
+
                 break;
 
             case 10:
 
-                // Checking for sort then displaying the binary tree
+                // Displaying the binary tree
+
                     printf("\n");
                     print_tree(root);
     
@@ -540,51 +546,33 @@ int main(){
                 // Storing the binary tree inside a file
 
                 FILE *f;
-                if (sort == 1){
-                    arr_write[0] = count+count1;
-                for ( i=0; i<count+count1;i++){
-                    arr_write[i+1] = store[i];
-                }
-                f = fopen("BinaryTree","wb");
-                if (f == NULL){
-                    printf("Error");
-                    exit(1);
-                }
-                fwrite(arr_write, sizeof(int), sizeof(arr_write), f);
-                fclose(f);
-                exit(0);
-                } else if (sort == 0){
+                if (sort == 0){
                     int preList[count1+count], inList[count+count1];
                     printf("\n");
                     preorder_list(root,count1+count,z,preList);
                     z++;
                     inorder_list(root,count1+count,z,inList);
                     printf("\n");
-                    for (i=0; i<count+count1; i++){
-                        printf("%d ",preList[i]);
-                    }
-                    printf("\n");
-                    for (i=0; i<count+count1; i++){
-                        printf("%d ",inList[i]);
-                    }
-
+                    
                     arr_write[0] = count1+count;
                     for (i=0; i<count1+count;i++){
-                    arr_write[i+1] = preList[i];
+                        arr_write[i+1] = preList[i];
                     }
                     for (i=count+count1; i<2*(count1+count);i++){
-                    arr_write[i+1] = inList[i-count-count1];
+                        arr_write[i+1] = inList[i-count-count1];
                     }
-                    printf("\n");
-                    for (i=0; i<2*(count1+count);i++){
-                        printf("%d ",arr_write[i]);
-                    }
-                f = fopen("BinaryTree","wb");
+
+                f = fopen("BinaryTree.txt","w+");
                 if (f == NULL){
                     printf("Error");
                     exit(1);
                 }
-                fwrite(arr_write, sizeof(int), sizeof(arr_write), f);
+                for (i=0; i<2*(count+count1)+1; i++){
+                    fprintf(f,"%d ",arr_write[i]);
+                    if (i == 0 || i == count+count1)
+                        fprintf(f,"\n");
+                    
+                }
                 fclose(f);
                 exit(0);
                 }
