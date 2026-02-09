@@ -11,7 +11,6 @@ class Node:
         return str(self.data)
 
 
-
 class DoublyLinkedList:
 
     def __init__(self) -> None:

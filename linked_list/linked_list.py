@@ -10,7 +10,6 @@ class Node:
         return str(self.data)
 
 
-
 class LinkedList:
 
     def __init__(self) -> None:
