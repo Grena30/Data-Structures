@@ -1,5 +1,3 @@
-
-
 class Node:
 
     def __init__(self, data) -> None:
@@ -77,39 +75,39 @@ class LinkedList:
         while current_node is not None:
             print(f" -> {current_node}", end="")
             current_node = current_node.next
-        
+
         return None
-    
+
     def get_middle_node(self) -> Node | None:
         current_node = self.head
-        middle = (self.num_of_nodes // 2) 
-        
+        middle = self.num_of_nodes // 2
+
         if self.num_of_nodes % 2 == 0:
             middle -= 1
-        
+
         if self.head is None:
             return None
-        
+
         while middle != 0 and current_node is not None:
             middle -= 1
             current_node = current_node.next
-        
+
         return current_node
-    
+
     def reverse(self) -> None:
         current_node = self.head
         previous_node = None
         next_node = None
-        
+
         if self.head is None:
             return None
-        
+
         while current_node != None:
             next_node = current_node.next
             current_node.next = previous_node
             previous_node = current_node
             current_node = next_node
-        
+
         self.head = previous_node
-        
-        return None    
+
+        return None

@@ -1,5 +1,3 @@
-
-
 class Node:
 
     def __init__(self, data) -> None:
@@ -21,16 +19,16 @@ class DoublyLinkedList:
         return None
 
     def insert(self, data) -> None:
-        new_node = Node(data=data) 
-        
+        new_node = Node(data=data)
+
         if self.head is None:
             self.head = new_node
             self.tail = new_node
         else:
             new_node.previous = self.tail
             self.tail.next = new_node
-            self.tail = new_node 
-        
+            self.tail = new_node
+
         return None
 
     def remove(self, data) -> None:
@@ -67,7 +65,7 @@ class DoublyLinkedList:
             current_node = current_node.next
 
         return None
-    
+
     def traverse_backward(self) -> None:
         current_node = self.tail
         print("\nEND", end="")
