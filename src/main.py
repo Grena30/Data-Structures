@@ -1,6 +1,6 @@
 from linked_list import LinkedList, DoublyLinkedList
 from stack import Stack
-from tree import BinarySearchTree, TreeComparator
+from tree import BinarySearchTree, TreeComparator, AVLTree
 
 
 def tree_creation() -> None:
@@ -11,21 +11,36 @@ def tree_creation() -> None:
     new_bst.insert(2)
     new_bst.insert(25)
     new_bst.traverse()
-    
+
     second_bst = BinarySearchTree()
     second_bst.insert(5)
     second_bst.insert(3)
     second_bst.insert(25)
     second_bst.traverse()
-    
+
     comparator = TreeComparator()
     print(comparator.compare(new_bst.root, second_bst.root))
-    
+
+    return None
+
+
+def avl_tree_creation() -> None:
+
+    avl = AVLTree()
+    avl.insert(5)
+    avl.insert(8)
+    avl.insert(6)
+
+    # avl.remove(5)
+
+    avl.traverse()
+
     return None
 
 
 def main() -> None:
-    tree_creation()
+    # tree_creation()
+    avl_tree_creation()
 
     return None
 
