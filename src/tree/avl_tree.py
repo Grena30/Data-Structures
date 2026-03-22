@@ -197,14 +197,20 @@ class AVLTree:
         else:
             temp_parent.right_node = temp_right_node
 
-        node.height = max(
-            self.calculate_height(node.left_node),
-            self.calculate_height(node.right_node),
-        ) + 1
-        temp_right_node.height = max(
-            self.calculate_height(temp_right_node.left_node),
-            self.calculate_height(temp_right_node.right_node),
-        ) + 1
+        node.height = (
+            max(
+                self.calculate_height(node.left_node),
+                self.calculate_height(node.right_node),
+            )
+            + 1
+        )
+        temp_right_node.height = (
+            max(
+                self.calculate_height(temp_right_node.left_node),
+                self.calculate_height(temp_right_node.right_node),
+            )
+            + 1
+        )
 
         return None
 
@@ -234,14 +240,20 @@ class AVLTree:
         else:
             temp_parent.right_node = temp_left_node
 
-        node.height = max(
-            self.calculate_height(node.left_node),
-            self.calculate_height(node.right_node),
-        ) + 1
-        temp_left_node.height = max(
-            self.calculate_height(temp_left_node.left_node),
-            self.calculate_height(temp_left_node.right_node),
-        ) + 1
+        node.height = (
+            max(
+                self.calculate_height(node.left_node),
+                self.calculate_height(node.right_node),
+            )
+            + 1
+        )
+        temp_left_node.height = (
+            max(
+                self.calculate_height(temp_left_node.left_node),
+                self.calculate_height(temp_left_node.right_node),
+            )
+            + 1
+        )
 
         return None
 

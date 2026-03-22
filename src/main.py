@@ -37,11 +37,11 @@ def avl_tree_creation() -> None:
 
     return None
 
+
 def red_black_tree_creation() -> None:
-    
+
     rbt = RedBlackTree()
-    
-    
+
 
 def main() -> None:
     # tree_creation()
