@@ -1,6 +1,6 @@
 from linked_list import LinkedList, DoublyLinkedList
 from stack import Stack
-from tree import BinarySearchTree, TreeComparator, AVLTree
+from tree import BinarySearchTree, TreeComparator, AVLTree, RedBlackTree
 
 
 def tree_creation() -> None:
@@ -37,6 +37,11 @@ def avl_tree_creation() -> None:
 
     return None
 
+def red_black_tree_creation() -> None:
+    
+    rbt = RedBlackTree()
+    
+    
 
 def main() -> None:
     # tree_creation()
