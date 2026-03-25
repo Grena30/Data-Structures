@@ -1,11 +1,10 @@
-
-
 class Color:
     RED = 1
     BLACK = 2
-    
+
+
 class Node:
-    
+
     def __init__(self, data, parent=None, color=Color.RED) -> None:
         self.data = data
         self.left_node = None
@@ -13,32 +12,35 @@ class Node:
         self.parent = parent
         self.color = color
 
+
 class RedBlackTree:
-    
+
     def __init__(self) -> None:
         self.root = None
-        
+
     def insert(self, data):
         if self.root is None:
             self.root = Node(data)
         else:
             self.insert_node(data, self.root)
-            
-    def insert_node(self, data, node)
+
+    def insert_node(self, data, node):
         if data < node.data:
-                if node.left_node:
-                    self.insert_node(data, node.left_node)
-                else:
-                    node.left_node = Node(data, node)
-                    self.settle_violation(node.left_node)
+            if node.left_node:
+                self.insert_node(data, node.left_node)
             else:
-                if node.right_node:
-                    self.insert_node(data, node.right_node)
-                else:
-                    node.right_node = Node(data, node)
-                    self.settle_violation(node.right_node)
-    
-    
+                node.left_node = Node(data, node)
+                self.settle_violation(node.left_node)
+        else:
+            if node.right_node:
+                self.insert_node(data, node.right_node)
+            else:
+                node.right_node = Node(data, node)
+                self.settle_violation(node.right_node)
+
+    def settle_violation(self, node):
+        pass
+
     def rotate_right(self, node):
         if node is None or node.left_node is None:
             return None
@@ -50,7 +52,7 @@ class RedBlackTree:
 
         temp_left_node.right_node = node
         node.left_node = t
-        
+
         if t is not None:
             t.parent = node
 
@@ -64,8 +66,7 @@ class RedBlackTree:
             temp_parent.left_node = temp_left_node
         else:
             temp_parent.right_node = temp_left_node
-    
-    
+
     def traverse(self) -> None:
         if self.root:
             return self.traverse_in_order(self.root)

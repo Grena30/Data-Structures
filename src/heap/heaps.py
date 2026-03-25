@@ -29,44 +29,48 @@ class Heap:
                 self.heap[index],
             )
             self.fix_up(parent_index)
-            
-    
+
     def get_max(self):
         return self.heap[0]
 
     # Return max and remove it as well
     def poll(self):
-        
+
         max_item = self.get_max()
-        
+
         # Swap root node with the last item and heapify
-        self.heap[0], self.heap[self.heap_size - 1] = self.heap[self.heap_size - 1], self.heap[0]
+        self.heap[0], self.heap[self.heap_size - 1] = (
+            self.heap[self.heap_size - 1],
+            self.heap[0],
+        )
         self.heap_size = self.heap_size - 1
-        
+
         self.fix_down(0)
-        
+
         return max_item
-    
+
     def fix_down(self, index):
-        
+
         index_left = 2 * index + 1
         index_right = 2 * index + 2
-        
+
         largest_index = index
-        
+
         if index_left < self.heap_size and self.heap[index_left] > self.heap[index]:
             largest_index = index_left
-        
+
         if index_right < self.heap_size and self.heap[index_right] > self.heap[index]:
             largest_index = index_right
-            
+
         if index != largest_index:
-            self.heap[index], self.heap[largest_index] = self.heap[largest_index], self.heap[index]
+            self.heap[index], self.heap[largest_index] = (
+                self.heap[largest_index],
+                self.heap[index],
+            )
             self.fix_down(largest_index)
-            
-    
+
     def heap_sort(self):
-        
+
         for _ in range(self.heap_size):
             max_item = self.poll()
             print(max_item)
